@@ -42,7 +42,11 @@ document.getElementById('go').addEventListener('click', function (event) {
   if (window.fbq) fbq('trackCustom', 'OpenTelegram', {region: 'vietnam'});
   var web = this.href, left = false;
   document.addEventListener('visibilitychange', function () { if (document.hidden) left = true; });
-  window.location.href = 'tg://resolve?domain=Kinovox_bot&start=vietnam';
-  setTimeout(function () { if (!left) window.location.href = web; }, 900);
+  // The pixel's event goes out before the page leaves: a leaving page can cut its own request off, and a campaign
+  // that never sees this event has nothing to learn from. The pause is short enough not to be felt.
+  setTimeout(function () {
+    window.location.href = 'tg://resolve?domain=Kinovox_bot&start=vietnam';
+    setTimeout(function () { if (!left) window.location.href = web; }, 900);
+  }, 180);
 });
 </script></body></html>
