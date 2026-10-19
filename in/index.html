@@ -39,13 +39,16 @@ fbq('init','1097930859895950');fbq('track','PageView');</script></head>
 // The app itself is asked for first; when the phone does not answer, the ordinary link is followed.
 document.getElementById('go').addEventListener('click', function (event) {
   event.preventDefault();
-  if (window.fbq) fbq('trackCustom', 'OpenTelegram', {region: 'india'});
-  var web = this.href, left = false;
+  // An ad can tag the landing with ?s=fb; the tag is carried to the bot, so the owners are told which placement it was.
+  var tag = new URLSearchParams(window.location.search).get('s') || '';
+  var start = tag ? 'india_' + tag.replace(/[^a-z0-9]/gi, '').slice(0, 6) : 'india';
+  if (window.fbq) fbq('trackCustom', 'OpenTelegram', {region: 'india', source: tag || 'direct'});
+  var web = 'https://t.me/Kinovox_bot?start=' + start, left = false;
   document.addEventListener('visibilitychange', function () { if (document.hidden) left = true; });
   // The pixel's event goes out before the page leaves: a leaving page can cut its own request off, and a campaign
   // that never sees this event has nothing to learn from. The pause is short enough not to be felt.
   setTimeout(function () {
-    window.location.href = 'tg://resolve?domain=Kinovox_bot&start=india';
+    window.location.href = 'tg://resolve?domain=Kinovox_bot&start=' + start;
     setTimeout(function () { if (!left) window.location.href = web; }, 900);
   }, 180);
 });
